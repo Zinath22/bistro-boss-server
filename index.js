@@ -42,8 +42,13 @@ async function run() {
         const result = await reviewCollection.find().toArray();
         res.send(result);
      })
-     
+
     //  carts collection 
+      
+    app.get('/carts', async(req, res) => {
+      const result = await cartCollection.find().toArray();
+      res.send(result);
+    });
 
      app.post('/carts', async(req, res) => {
        const cartItem = req.body;
