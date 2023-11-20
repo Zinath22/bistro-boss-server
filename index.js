@@ -4,6 +4,7 @@ const app = express();
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const port = process.env.PORT || 5000;
 
 
@@ -45,7 +46,7 @@ async function run() {
 
     // middleware 
     const verifyToken = (req, res, next) => {
-      console.log('inside verify token', req.headers.authorization);
+      // console.log('inside verify token', req.headers.authorization);
       if(!req.headers.authorization){
         return res.status(401).send({message: 'unauthorized access'});
       }
@@ -230,6 +231,22 @@ async function run() {
       const query = { _id: new ObjectId(id)}
       const result = await cartCollection.deleteOne(query);
       res.send(result);
+    });
+
+    // payment intent 
+    app.post('/create-payment-intent', async(req, res) =>{
+      const {price} = req.body;
+      const amount = parseInt(price * 100);
+      console.log(amount, 'amount')
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: 'usd',
+        payment_method_types: ['card']
+      });
+      res.send({
+        clientSecret: paymentIntent.client_secret
+      })
     })
      
 
