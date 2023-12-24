@@ -346,7 +346,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('resturent is run')
+    res.send('bistro is run')
 })
 
 app.listen(port, () =>{
